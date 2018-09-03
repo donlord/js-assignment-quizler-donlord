@@ -1,6 +1,6 @@
 import vorpal from 'vorpal'
 import { prompt } from 'inquirer'
-
+const fs = require('fs')
 import {
   readFile,
   writeFile,
@@ -36,13 +36,17 @@ const createQuiz = title =>
   prompt(askForQuestions)
     .then(answer =>
       // TODO finish createQuiz logic
-      console.log(answer)
+
+      writeFile(title.fileName + '.js', createPrompt(answer))
     )
     .catch(err => console.log('Error creating the quiz.', err))
 
-// const takeQuiz = (title, output) =>
-// TODO implement takeQuiz
-
+const takeQuiz = (title, output) => {
+  // TODO implement takeQuiz
+  // readfile, create an object with questionx:answer , write that to output
+  // let x = readFile(title.fileName + '.js')
+  // x.then(answer => console.log(x))
+}
 // const takeRandomQuiz = (quizes, output, n) =>
 // TODO implement takeRandomQuiz
 
@@ -53,7 +57,7 @@ cli
   )
   .action(function (input, callback) {
     // TODO update create command for correct functionality
-    return createQuiz(input.fileName)
+    return createQuiz(input)
   })
 
 cli
