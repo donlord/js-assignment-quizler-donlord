@@ -68,40 +68,40 @@ export const objMaker = (name, message, choices) => {
 
 export const createQuestions = inputObject => {
   if (
-    inputObject === undefined ||
-    inputObject[1] === undefined ||
     inputObject === {} ||
     typeof inputObject === 'undefined' ||
     Object.keys(inputObject).length === 0
   ) {
     return []
   }
+  let inputArray = Object.entries(inputObject)
 
   let questions = []
   let keys = 'question-1'
   let choices = []
-  let qCounter = 1
   let message = ''
   let name = ''
-  console.log(inputObject[0])
-  for (let i = 0; i < inputObject.length; i++) {
-    if (keys === inputObject[i][0]) {
-      message = inputObject[i][1]
-      name = inputObject[i][0]
-    } else if (inputObject[i][0].includes(keys)) {
-      choices.push(inputObject[i][1])
+
+  for (let i = 0; i < inputArray.length; i++) {
+    if (keys === inputArray[i][0]) {
+      message = inputArray[i][1]
+      //   name = inputArray[i][0]
+      name = message
+    } else if (inputArray[i][0].includes(keys)) {
+      choices.push(inputArray[i][1])
     } else {
       let questionObj = objMaker(name, message, choices)
       questions.push(questionObj)
       choices = []
-      message = inputObject[i][1]
-      keys = inputObject[i][0]
-      name = inputObject[i][0]
-      qCounter++
+      message = inputArray[i][1]
+      keys = inputArray[i][0]
+      //   name = inputArray[i][0]
+      name = message
     }
   }
   let questionObj = objMaker(name, message, choices)
   questions.push(questionObj)
+  return questions
 }
 export const readFile = file => {
   return new Promise((resolve, reject) => {

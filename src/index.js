@@ -8,6 +8,8 @@ import {
   createPrompt,
   createQuestions
 } from './lib'
+import { write } from 'fs'
+import { json } from 'jsverify'
 
 const cli = vorpal()
 
@@ -35,20 +37,24 @@ const askForQuestions = [
 const createQuiz = title =>
   prompt(askForQuestions)
     .then(answer =>
-      // TODO finish createQuiz logic
-
-      writeFile(title.fileName + '.js', createPrompt(answer))
+      prompt(createPrompt(answer)).then(quizdata =>
+        writeFile(title.fileName + '.json', quizdata)
+      )
     )
     .catch(err => console.log('Error creating the quiz.', err))
 
 const takeQuiz = (title, output) => {
-  // TODO implement takeQuiz
-  // readfile, create an object with questionx:answer , write that to output
-  // let x = readFile(title.fileName + '.js')
-  // x.then(answer => console.log(x))
+  readFile(title)
+    .then(fileData => createQuestions(JSON.parse(fileData)))
+    .then(quizData => prompt(quizData))
+    .then(answers => writeFile(output + '.json', answers))
+    .catch(err => console.log('Error taking the quiz.', err))
 }
-// const takeRandomQuiz = (quizes, output, n) =>
-// TODO implement takeRandomQuiz
+
+const takeRandomQuiz = (quizzes, out) => {
+  let randInt = Math.floor(Math.random() * quizzes.length)
+  takeQuiz(quizzes[randInt] + '.json', out)
+}
 
 cli
   .command(
@@ -56,7 +62,6 @@ cli
     'Creates a new quiz and saves it to the given fileName'
   )
   .action(function (input, callback) {
-    // TODO update create command for correct functionality
     return createQuiz(input)
   })
 
@@ -66,7 +71,7 @@ cli
     'Loads a quiz and saves the users answers to the given outputFile'
   )
   .action(function (input, callback) {
-    // TODO implement functionality for taking a quiz
+    return takeQuiz(input.fileName + '.json', input.outputFile)
   })
 
 cli
@@ -78,6 +83,7 @@ cli
   )
   .action(function (input, callback) {
     // TODO implement the functionality for taking a random quiz
+    return takeRandomQuiz(input.fileNames, input.outputFile)
   })
 
 cli.delimiter(cli.chalk['yellow']('quizler>')).show()
