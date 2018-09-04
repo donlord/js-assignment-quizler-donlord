@@ -65,7 +65,9 @@ export const objMaker = (name, message, choices) => {
     choices: choices
   }
 }
-
+/* Changed the name to be the question title rather than question1...etc
+for the prompt of inquirer
+*/
 export const createQuestions = inputObject => {
   if (
     inputObject === {} ||
